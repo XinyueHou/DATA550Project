@@ -1,0 +1,89 @@
+---
+title: "Analysis of Disability and Health Data System (DHDS)"
+author: "Xinyue Hou"
+date: "2024-02-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+# The Disability and Health Data System (DHDS) is a vital resource developed and maintained by the Centers for Disease Control and Prevention (CDC). This interactive tool provides users with the ability to access state-level data regarding adults with disabilities in the United States. The DHDS dataset is designed to inform and assist public health programs, policy makers, and researchers in understanding and addressing the health needs of adults living with disabilities.
+
+# The DHDS categorizes disabilities into six functional types: cognitive, hearing, mobility, vision, self-care, and independent living. Each category encompasses specific challenges that individuals may face, such as serious difficulty concentrating, remembering, or making decisions (cognitive); serious difficulty hearing or being deaf (hearing); serious difficulty walking or climbing stairs (mobility); serious difficulty seeing, even when wearing glasses (vision); difficulty dressing or bathing (self-care); and difficulty doing errands alone due to a physical, mental, or emotional condition (independent living).
+
+# The data within the DHDS is collected through the Behavioral Risk Factor Surveillance System (BRFSS), the world's largest telephone survey, which gathers information on health-related risk behaviors, chronic health conditions, and use of preventive services. Through the DHDS, data is made accessible in a user-friendly format, offering insights into the prevalence and impact of disabilities across different states and demographic groups.
+
+# This analysis aims to explore the prevalence of different types of disabilities by state, examine the overall distribution of disability types, and compare the prevalence of disabilities across various demographics. By exploring into the DHDS dataset, we seek to uncover patterns and insights that can contribute to the development of more inclusive and effective public health strategies, ensuring that individuals with disabilities receive the support and services they need to lead healthy lives.
+
+```{r cars}
+
+library(dplyr)
+library(tidyverse)
+library(readr)
+library(ggplot2)
+
+# Load the data
+dhds_data <- read.csv("C:/Users/Monica/Downloads/Disability_and_Health_Data_System__DHDS__20240219.csv")
+
+## Analysis & images
+# Prevalence of Disabilities by State
+state_prevalence <- dhds_data %>%
+  group_by(LocationDesc, Indicator) %>%
+  summarise(AveragePrevalence = mean(Data_Value, na.rm = TRUE), .groups = 'drop') %>%
+  arrange(desc(AveragePrevalence))
+
+# Overall Distribution of Disability Types
+disability_distribution <- dhds_data %>%
+  group_by(Indicator) %>%
+  summarise(TotalPrevalence = sum(Data_Value, na.rm = TRUE), .groups = 'drop') %>%
+  arrange(desc(TotalPrevalence))
+
+# Comparisons Between Different Demographics
+demographic_comparison <- dhds_data %>%
+  group_by(Stratification1, Indicator) %>%
+  summarise(AveragePrevalence = mean(Data_Value, na.rm = TRUE), .groups = 'drop') %>%
+  pivot_wider(names_from = Indicator, values_from = AveragePrevalence)
+
+# Plotting
+disability_distribution_plot <- ggplot(disability_distribution, aes(x = reorder(Indicator, -TotalPrevalence), y = TotalPrevalence)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Distribution of Disability Types", x = "Disability Type", y = "Total Prevalence (%)") +
+  coord_flip()
+
+# Save the plot
+ggsave("docs/figures/disability_distribution_plot.png", plot = disability_distribution_plot, width = 10, height = 8, dpi = 300)
+
+```
+## Distribution of Disability Types
+# This figure illustrates the distribution of different types of disabilities among adults in the United States, as reported in the DHDS dataset. Each bar represents one of the six functional disability types: cognitive, hearing, mobility, vision, self-care, and independent living. The height of the bars indicates the prevalence or total count of individuals with each disability type, providing a visual comparison of how common each disability is within the surveyed population. This visualization highlights which disabilities are most prevalent and underscores the diverse needs within the disability community.
+
+
+```{r}
+library(knitr)
+library(kableExtra)
+
+disability_distribution %>%
+  kable(format = "html", caption = "Overall Distribution of Disability Types") %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  save_kable("output/tables/distribution_table.html")
+
+```
+# This table presents a summary of the total prevalence (counts) of each disability type within the DHDS dataset. By providing a numerical comparison of the total prevalence rates or counts for cognitive, hearing, mobility, vision, self-care, and independent living disabilities, the table offers a comprehensive overview of the distribution of disability types.
+
+```{r}
+
+# Corrected code to generate and save the table
+demographic_comparison %>%
+  kable(format = "html", caption = "Comparison of Disability Prevalence Across Different Demographics") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) %>%
+  column_spec(1, bold = T, border_right = TRUE) %>%
+  save_kable("output/tables/demographic_table.html")
+
+
+```
+# This table compares the average prevalence of disabilities across different demographic groups, such as education level, income level, or age group, based on the DHDS data. Each row represents a demographic group, while columns are dedicated to different disability types. The values indicate the average prevalence rate of each disability within the demographic groups. This comparative analysis helps identify which groups may be more vulnerable or disproportionately affected by certain disabilities, guiding targeted public health and policy efforts.
+

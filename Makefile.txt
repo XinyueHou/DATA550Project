@@ -1,0 +1,6 @@
+all: report
+
+report:
+	Rscript -e "rmarkdown::render('docs/report.Rmd', output_file='docs/final_report.html')"
+
+
