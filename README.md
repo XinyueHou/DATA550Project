@@ -9,7 +9,6 @@ Description
 # This analysis aims to explore the prevalence of different types of disabilities by state, examine the overall distribution of disability types, and compare the prevalence of disabilities across various demographics. By exploring into the DHDS dataset, we seek to uncover patterns and insights that can contribute to the development of more inclusive and effective public health strategies, ensuring that individuals with disabilities receive the support and services they need to lead healthy lives.
 
 
-Structure
 # The repository is organized as follows:
 data/: Contains the dataset Disability_and_Health_Data_System__DHDS__20240219.csv.
 R/: Includes R scripts for data analysis.
@@ -18,7 +17,6 @@ README.md: Provides an overview of the project and instructions for reproducing 
 Makefile: A makefile to automate the generation of the final report.
 
 
-Generating the Final Report
 # To generate the final report:
 Ensure you have R and the required R packages installed. The main packages used include ggplot2, dplyr, knitr, and kableExtra.
 Clone this repository to your local machine.
@@ -26,7 +24,6 @@ Navigate to the project directory in your terminal.
 Run make report to generate the final report from the report.Rmd file. The output will be saved in the docs/ directory.
 
 
-Contents of the Report
 # The final report includes:
 An overview of the data.
 Descriptive statistics of the study population.
@@ -34,3 +31,9 @@ A distribution of disability types.
 Code for Tables and Figures
 The code for creating required tables is located in R/analysis_script.R.
 The code for generating figures is also found within R/analysis_script.R.
+
+## Docker Instructions
+### Building the Docker Image
+To build the Docker image, run the following command in your project directory:
+```bash
+docker build -t your-image-name .
