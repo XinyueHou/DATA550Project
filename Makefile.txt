@@ -1,6 +1,14 @@
 all: report
 
-report:
+# Target to render the R Markdown document
+rmarkdown:
 	Rscript -e "rmarkdown::render('docs/report.Rmd', output_file='docs/final_report.html')"
+
+# Target to run the Docker container, which depends on rmarkdown having been run
+report: rmarkdown
+	docker run --rm -v $(CURDIR)/report:/usr/local/src/project/report 550project
+
+.PHONY: all report rmarkdown
+
 
 
